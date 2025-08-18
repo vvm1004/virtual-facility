@@ -22,16 +22,18 @@ services:
       args:
         - APP_NAME=workflows-service
     command: npm run start:dev -- workflows-service # This instructs Docker Compose to run the "start:dev" script when starting the container
-    ports:
-      - 3001:3001
     environment: # Here we specify the environment variables that will be passed to the container
       - POSTGRES_HOST=workflows-db
       - POSTGRES_PORT=5432
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=workflows
+      - NATS_URL=nats://nats:4222
+    deploy:
+      replicas: 3
     depends_on: # This instructs Docker Compose to start the "workflows-db" container before starting the "workflows-service" container
       - workflows-db
+      - nats
   workflows-db:
     image: postgres:13.2-alpine
     environment: # We need to make sure these environment variables match the ones we specified in the "workflows-service" service
@@ -67,12 +69,16 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=virtual-facility
+      - NATS_URL=nats://nats:4222
     depends_on:
       - virtual-facility-db
       - workflows-service
+      - nats
   virtual-facility-db:
     image: postgres:13.2-alpine
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=virtual-facility
+  nats:
+    image: nats:2.2.2-alpine
