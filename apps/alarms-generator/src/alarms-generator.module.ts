@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AlarmsGeneratorController } from './alarms-generator.controller';
 import { AlarmsGeneratorService } from './alarms-generator.service';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ClientsModule, Transport } from '@nestjs/microservices';

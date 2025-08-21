@@ -133,3 +133,53 @@ services:
           action: rebuild
     depends_on:
       - nats
+  alarms-classifier-service:
+    develop:
+      watch:
+        - path: ./apps/alarms-classifier-service
+          target: /usr/src/app/apps/alarms-classifier-service
+          action: sync
+        - path: ./libs
+          target: /usr/src/app/libs
+          action: sync
+        - path: ./tsconfig.json
+          target: /usr/src/app/tsconfig.json
+          action: sync
+        - path: ./package.json
+          target: /usr/src/app/package.json
+          action: rebuild
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        - APP_NAME=alarms-classifier-service
+    command: npm run start:dev -- alarms-classifier-service
+    environment:
+      - NATS_URL=nats://nats:4222
+    depends_on:
+      - nats
+  notifications-service:
+    develop:
+      watch:
+        - path: ./apps/notifications-service
+          target: /usr/src/app/apps/notifications-service
+          action: sync
+        - path: ./libs
+          target: /usr/src/app/libs
+          action: sync
+        - path: ./tsconfig.json
+          target: /usr/src/app/tsconfig.json
+          action: sync
+        - path: ./package.json
+          target: /usr/src/app/package.json
+          action: rebuild
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        - APP_NAME=notifications-service
+    command: npm run start:dev -- notifications-service
+    environment:
+      - NATS_URL=nats://nats:4222
+    depends_on:
+      - nats
