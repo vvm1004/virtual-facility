@@ -4,6 +4,7 @@ import { WorkflowsServiceService } from './workflows-service.service';
 import { WorkflowsModule } from './workflows/workflows.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { HealthModule } from './health/health.module';
+import { InboxModule } from './inbox/inbox.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { HealthModule } from './health/health.module';
     }),
     WorkflowsModule,
     HealthModule,
+    InboxModule,
   ],
   controllers: [WorkflowsServiceController],
   providers: [WorkflowsServiceService],
