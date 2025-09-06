@@ -84,6 +84,7 @@
       "<rootDir>/libs/"
     ],
     "moduleNameMapper": {
+      "^@app/tracing(|/.*)$": "<rootDir>/libs/tracing/src/$1",
       "^@app/workflows(|/.*)$": "<rootDir>/libs/workflows/src/$1"
     }
   }

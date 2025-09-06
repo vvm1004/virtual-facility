@@ -1,9 +1,11 @@
+import { TracingLogger } from '@app/tracing/tracing.logger';
 import { Controller, Logger } from '@nestjs/common';
 import { Ctx, EventPattern, Payload, RmqContext } from '@nestjs/microservices';
 
 @Controller()
 export class NotificationsServiceController {
-  private readonly logger = new Logger(NotificationsServiceController.name);
+  // private readonly logger = new Logger(NotificationsServiceController.name);
+  constructor(private readonly logger: TracingLogger) {}
 
   @EventPattern('notification.send')
   sendNotification(@Payload() data: unknown, @Ctx() context: RmqContext) {

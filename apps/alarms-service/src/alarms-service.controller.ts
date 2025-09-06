@@ -2,16 +2,18 @@ import { Controller, Get, Inject, Logger } from '@nestjs/common';
 import { EventPattern, Payload, ClientProxy } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 import { NATS_MESSAGE_BROKER, NOTIFICATIONS_SERVICE } from './constants';
+import { TracingLogger } from '@app/tracing/tracing.logger';
+import { NatsClientProxy } from '@app/tracing/nats-client/nats-client.proxy';
+import { RabbitmqClientProxy } from '@app/tracing/rabbitmq-client/rabbitmq-client.proxy';
 
 @Controller()
 export class AlarmsServiceController {
-  private readonly logger = new Logger(AlarmsServiceController.name);
+  // private readonly logger = new Logger(AlarmsServiceController.name);
 
   constructor(
-    @Inject(NATS_MESSAGE_BROKER)
-    private readonly natsMessageBroker: ClientProxy,
-    @Inject(NOTIFICATIONS_SERVICE)
-    private readonly notificationsService: ClientProxy,
+    private readonly natsMessageBroker: NatsClientProxy,
+    private readonly notificationsService: RabbitmqClientProxy,
+    private readonly logger: TracingLogger,
   ) {}
 
   @EventPattern('alarm.created')
