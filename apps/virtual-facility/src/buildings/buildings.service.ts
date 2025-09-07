@@ -1,6 +1,4 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { CreateBuildingDto } from './dto/create-building.dto';
-import { UpdateBuildingDto } from './dto/update-building.dto';
 import { Building } from './entities/building.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
@@ -9,6 +7,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { WORKFLOWS_SERVICE } from '../constants';
 import { lastValueFrom } from 'rxjs';
 import { Outbox } from '../outbox/entities/outbox.entity';
+import { CreateBuildingDto, UpdateBuildingDto } from '@app/buildings';
 
 @Injectable()
 export class BuildingsService {

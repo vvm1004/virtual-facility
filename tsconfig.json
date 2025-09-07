@@ -22,6 +22,18 @@
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
+      "@app/alarms": [
+        "libs/alarms/src"
+      ],
+      "@app/alarms/*": [
+        "libs/alarms/src/*"
+      ],
+      "@app/buildings": [
+        "libs/buildings/src"
+      ],
+      "@app/buildings/*": [
+        "libs/buildings/src/*"
+      ],
       "@app/tracing": [
         "libs/tracing/src"
       ],
