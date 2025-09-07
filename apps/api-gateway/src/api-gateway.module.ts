@@ -10,6 +10,8 @@ import { AlarmsController } from './routes/alarms.controller';
 import { HealthController } from './health/health.controller';
 import { BuildingsGatewayController } from './routes/buildings.controller';
 import { HttpModule } from '@nestjs/axios';
+import { ApiGatewayController } from './api-gateway.controller';
+import { ApiGatewayService } from './api-gateway.service';
 
 @Module({
   imports: [
@@ -21,7 +23,13 @@ import { HttpModule } from '@nestjs/axios';
     BrokersModule,
     HttpModule.register({ timeout: 5000 }),
   ],
-  controllers: [HealthController, AlarmsController, BuildingsGatewayController],
+  controllers: [
+    HealthController,
+    AlarmsController,
+    BuildingsGatewayController,
+    ApiGatewayController,
+  ],
+  providers: [ApiGatewayService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

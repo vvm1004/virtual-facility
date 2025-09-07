@@ -18,6 +18,7 @@ export class BuildingsGatewayController {
   @ApiBody({ type: CreateBuildingDto })
   async create(@Body() dto: CreateBuildingDto) {
     const res = await firstValueFrom(
+      // forward to Virtual Facility service
       this.http.post('http://virtual-facility:3001/buildings', dto),
     );
     return res.data;

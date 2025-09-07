@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { GatewayNatsProxy } from '../brokers/gateway-nats.proxy';
-import { ask } from '../brokers/rx';
+import { ack, ask } from '../brokers/rx';
 import { ClassifyAlarmDto, CreateAlarmDto } from '@app/alarms';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 
@@ -9,7 +9,7 @@ import { ApiBody, ApiTags } from '@nestjs/swagger';
 export class AlarmsController {
   constructor(private readonly nats: GatewayNatsProxy) {}
 
-  // request/response qua NATS
+  // request/response via NATS
   @Post('classify')
   @ApiBody({ type: ClassifyAlarmDto })
   async classify(@Body() dto: ClassifyAlarmDto) {
@@ -23,11 +23,11 @@ export class AlarmsController {
     return res; // { category: 'critical'|'non-critical'|'invalid' }
   }
 
-  // fire-and-forget qua NATS
+  // fire-and-forget via NATS
   @Post()
   async create(@Body() dto: CreateAlarmDto) {
     const timeout = Number(process.env.BROKER_TIMEOUT_MS ?? 3000);
-    await ask(this.nats.emit('alarm.created', dto), timeout, 0);
+    await ack(this.nats.emit('alarm.created', dto), timeout);
     return { ok: true };
   }
 }

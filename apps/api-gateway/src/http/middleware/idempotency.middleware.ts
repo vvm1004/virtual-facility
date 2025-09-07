@@ -2,7 +2,7 @@ import { NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 
 /**
- * Demo chỉ dùng Map in-memory. Production nên dùng Redis.
+ * Demo conly use Map in-memory. Production should use Redis.
  */
 const memory = new Map<string, any>();
 

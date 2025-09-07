@@ -12,7 +12,10 @@ async function bootstrap() {
 
   // Security & body size
   app.use(helmet());
-  app.enableCors({ origin: process.env.CORS_ORIGIN ?? '*', credentials: true });
+  const origin = process.env.CORS_ORIGIN ?? '*';
+  app.enableCors(
+    origin === '*' ? { origin: '*' } : { origin, credentials: true },
+  );
   app.use(json({ limit: '1mb' }));
 
   // Versioning

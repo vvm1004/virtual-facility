@@ -5,11 +5,12 @@ import {
   catchError,
   throwError,
   Observable,
+  defaultIfEmpty,
+  TimeoutError,
 } from 'rxjs';
-import { TimeoutError } from 'rxjs';
 
 export async function ask<T>(
-  obs$: Observable<any>,
+  obs$: Observable<T>,
   ms = 3000,
   retries = 1,
 ): Promise<T> {
@@ -24,4 +25,8 @@ export async function ask<T>(
       ),
     ),
   );
+}
+
+export async function ack(obs$: Observable<unknown>, ms = 3000): Promise<void> {
+  await lastValueFrom(obs$.pipe(timeout(ms), defaultIfEmpty(undefined)));
 }
