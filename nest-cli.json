@@ -10,6 +10,15 @@
   "monorepo": true,
   "root": "apps/virtual-facility",
   "projects": {
+    "alarms": {
+      "type": "library",
+      "root": "libs/alarms",
+      "entryFile": "index",
+      "sourceRoot": "libs/alarms/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/alarms/tsconfig.lib.json"
+      }
+    },
     "alarms-classifier-service": {
       "type": "application",
       "root": "apps/alarms-classifier-service",
@@ -35,6 +44,24 @@
       "sourceRoot": "apps/alarms-service/src",
       "compilerOptions": {
         "tsConfigPath": "apps/alarms-service/tsconfig.app.json"
+      }
+    },
+    "api-gateway": {
+      "type": "application",
+      "root": "apps/api-gateway",
+      "entryFile": "main",
+      "sourceRoot": "apps/api-gateway/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/api-gateway/tsconfig.app.json"
+      }
+    },
+    "buildings": {
+      "type": "library",
+      "root": "libs/buildings",
+      "entryFile": "index",
+      "sourceRoot": "libs/buildings/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/buildings/tsconfig.lib.json"
       }
     },
     "notifications-service": {

@@ -22,5 +22,6 @@ import { WORKFLOWS_SERVICE } from '../constants';
   ],
   controllers: [BuildingsController],
   providers: [BuildingsService],
+  exports: [BuildingsService],
 })
 export class BuildingsModule {}

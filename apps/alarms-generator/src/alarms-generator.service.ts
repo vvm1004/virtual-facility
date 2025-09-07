@@ -12,7 +12,7 @@ export class AlarmsGeneratorService {
     private readonly tracingService: TracingService,
   ) {}
 
-  @Interval(10000)
+  // @Interval(10000)
   generateAlarm() {
     const headers = nats.headers();
     headers.set('traceId', this.tracingService.generateTraceId());

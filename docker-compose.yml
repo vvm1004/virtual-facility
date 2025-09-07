@@ -1,6 +1,58 @@
 version: '3.8'
 
 services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - 5672:5672
+      - 15672:15672
+  redis:
+    image: redis:7-alpine
+    ports:
+      - '6379:6379'
+    command: ['redis-server', '--appendonly', 'yes']
+  nats:
+    image: nats:2.2.2-alpine
+
+  api-gateway:
+    develop:
+      watch:
+        - path: ./apps/api-gateway
+          target: /usr/src/app/apps/api-gateway
+          action: sync
+        - path: ./libs
+          target: /usr/src/app/libs
+          action: sync
+        - path: ./tsconfig.json
+          target: /usr/src/app/tsconfig.json
+          action: sync
+        - path: ./package.json
+          target: /usr/src/app/package.json
+          action: rebuild
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        - APP_NAME=api-gateway
+    command: pnpm run start:dev -- api-gateway
+    ports:
+      - '3000:3000'
+    environment:
+      - PORT=3000
+      - NATS_URL=nats://nats:4222
+      - RABBITMQ_URL=amqp://rabbitmq:5672
+      - REDIS_URL=redis://redis:6379
+      - CORS_ORIGIN=*
+      - BROKER_TIMEOUT_MS=3000
+      - BROKER_RETRIES=1
+      - RATE_LIMIT_TTL=60000
+      - RATE_LIMIT=300
+      - IDEMPOTENCY_TTL_MS=600000
+      - CLASSIFY_CACHE_TTL=5000
+    depends_on:
+      - nats
+      - rabbitmq
+      - redis
   workflows-service:
     develop:
       watch:
@@ -29,11 +81,13 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=workflows
       - RABBITMQ_URL=amqp://rabbitmq:5672
+      - REDIS_URL=redis://redis:6379
     deploy:
       replicas: 3
     depends_on: # This instructs Docker Compose to start the "workflows-db" container before starting the "workflows-service" container
       - workflows-db
       - rabbitmq
+      - redis
   workflows-db:
     image: postgres:13.2-alpine
     environment: # We need to make sure these environment variables match the ones we specified in the "workflows-service" service
@@ -62,7 +116,7 @@ services:
         - APP_NAME=virtual-facility
     command: pnpm run start:dev -- virtual-facility
     ports:
-      - 3000:3000 # This instructs Docker Compose to map port 3000 on the host to port 3000 on the container
+      - 3001:3001 # This instructs Docker Compose to map port 3001 on the host to port 3001 on the container
     environment:
       - POSTGRES_HOST=virtual-facility-db
       - POSTGRES_PORT=5432
@@ -80,8 +134,6 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=virtual-facility
-  nats:
-    image: nats:2.2.2-alpine
 
   alarms-service:
     build:
@@ -186,8 +238,3 @@ services:
       - RABBITMQ_URL=amqp://rabbitmq:5672
     depends_on:
       - rabbitmq
-  rabbitmq:
-    image: rabbitmq:3-management
-    ports:
-      - 5672:5672
-      - 15672:15672
