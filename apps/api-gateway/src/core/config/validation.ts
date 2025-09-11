@@ -10,6 +10,9 @@ export function configValidation(config: Record<string, any>) {
     RATE_LIMIT_TTL: Joi.number().default(60000),
     RATE_LIMIT: Joi.number().default(300),
     CORS_ORIGIN: Joi.string().default('*'),
+    REDIS_URL: Joi.string().required(),
+    IDEMPOTENCY_TTL_MS: Joi.number().default(600000),
+    CLASSIFY_CACHE_TTL: Joi.number().default(5000),
   });
   const { error, value } = schema.validate(config, {
     allowUnknown: true,

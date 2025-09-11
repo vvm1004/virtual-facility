@@ -18,7 +18,7 @@ import { TracingHttpModule } from '../tracing/tracing.module';
         transport: Transport.RMQ,
         options: {
           urls: [process.env.RABBITMQ_URL!],
-          queue: 'api-gateway',
+          queue: 'notifications-service',
         },
       },
     ]),
