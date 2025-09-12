@@ -12,6 +12,7 @@ import { BuildingsGatewayController } from './routes/buildings.controller';
 import { HttpModule } from '@nestjs/axios';
 import { ApiGatewayController } from './api-gateway.controller';
 import { ApiGatewayService } from './api-gateway.service';
+import { RedisModule } from './core/redis/redis.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { ApiGatewayService } from './api-gateway.service';
     TracingHttpModule,
     BrokersModule,
     HttpModule.register({ timeout: 5000 }),
+    RedisModule,
   ],
   controllers: [
     HealthController,

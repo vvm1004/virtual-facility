@@ -78,8 +78,8 @@ importers:
         specifier: ^4.0.1
         version: 4.0.1
       redlock:
-        specifier: ^4.2.0
-        version: 4.2.0
+        specifier: 5.0.0-beta.2
+        version: 5.0.0-beta.2
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
@@ -114,9 +114,6 @@ importers:
       '@types/jest':
         specifier: ^30.0.0
         version: 30.0.0
-      '@types/joi':
-        specifier: ^17.2.3
-        version: 17.2.3
       '@types/node':
         specifier: ^22.10.7
         version: 22.18.0
@@ -1066,10 +1063,6 @@ packages:
   '@types/jest@30.0.0':
     resolution: {integrity: sha512-XTYugzhuwqWjws0CVz8QpM36+T+Dz5mTEBKhNs/esGLnCIlGdRy+Dq78NRjd7ls7r8BC8ZRMOrKlkO1hU0JOwA==}
 
-  '@types/joi@17.2.3':
-    resolution: {integrity: sha512-dGjs/lhrWOa+eO0HwgxCSnDm5eMGCsXuvLglMghJq32F6q5LyyNuXb41DHzrg501CKNOSSAHmfB7FDGeUnDmzw==}
-    deprecated: This is a stub types definition. joi provides its own type definitions, so you do not need this installed.
-
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
 
@@ -1497,9 +1490,6 @@ packages:
 
   bl@4.1.0:
     resolution: {integrity: sha512-1W07cM9gS6DcLperZfFSj+bWLtaPGSOHWhPiGzXmvVJbRLdG82sH/Kn8EtW1VqWVA54AKf2h5k5BbnIbwF3h6w==}
-
-  bluebird@3.7.2:
-    resolution: {integrity: sha512-XpNj6GDQzdfW+r2Wnn7xiSAd7TM3jzkxGXBGTtWKuSXv1xUV+azxAm8jdWZN06QTQk+2N2XB9jRDkvbmQmcRtg==}
 
   body-parser@2.2.0:
     resolution: {integrity: sha512-02qvAaxv8tp7fBa/mw1ga98OGm+eCbqzJOKoRt70sLmfEEi+jyBYVTDGfCL/k06/4EMk/z01gCe7HoCH/f2LTg==}
@@ -2970,9 +2960,9 @@ packages:
     resolution: {integrity: sha512-DJnGAeenTdpMEH6uAJRK/uiyEIH9WVsUmoLwzudwGJUwZPp80PDBWPHXSAGNPwNvIXAbe7MSUB1zQFugFml66A==}
     engines: {node: '>=4'}
 
-  redlock@4.2.0:
-    resolution: {integrity: sha512-j+oQlG+dOwcetUt2WJWttu4CZVeRzUrcVcISFmEmfyuwCVSJ93rDT7YSgg7H7rnxwoRyk/jU46kycVka5tW7jA==}
-    engines: {node: '>=8.0.0'}
+  redlock@5.0.0-beta.2:
+    resolution: {integrity: sha512-2RDWXg5jgRptDrB1w9O/JgSZC0j7y4SlaXnor93H/UJm/QyDiFgBKNtrh0TI6oCXqYSaSoXxFh6Sd3VtYfhRXw==}
+    engines: {node: '>=12'}
 
   reflect-metadata@0.2.2:
     resolution: {integrity: sha512-urBwgfrvVP/eAyXx4hluJivBKzuEbSQs9rKWCrCkbSxNv8mxPcUZKeuoF3Uy4mJl3Lwprp6yy5/39VWigZ4K6Q==}
@@ -4648,10 +4638,6 @@ snapshots:
       expect: 30.0.5
       pretty-format: 30.0.5
 
-  '@types/joi@17.2.3':
-    dependencies:
-      joi: 18.0.1
-
   '@types/json-schema@7.0.15': {}
 
   '@types/luxon@3.6.2': {}
@@ -5119,8 +5105,6 @@ snapshots:
       buffer: 5.7.1
       inherits: 2.0.4
       readable-stream: 3.6.2
-
-  bluebird@3.7.2: {}
 
   body-parser@2.2.0:
     dependencies:
@@ -6726,9 +6710,9 @@ snapshots:
     dependencies:
       redis-errors: 1.2.0
 
-  redlock@4.2.0:
+  redlock@5.0.0-beta.2:
     dependencies:
-      bluebird: 3.7.2
+      node-abort-controller: 3.1.1
 
   reflect-metadata@0.2.2: {}
 

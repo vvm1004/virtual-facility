@@ -5,7 +5,9 @@ import { Response } from 'express';
 export class BrokerExceptionFilter implements ExceptionFilter {
   catch(err: any, host: ArgumentsHost) {
     const res = host.switchToHttp().getResponse<Response>();
-
+    if (res.headersSent) {
+      return;
+    }
     if (err?.message === 'UPSTREAM_TIMEOUT') {
       return res.status(504).json({ error: 'Gateway Timeout' });
     }
