@@ -3,23 +3,30 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { GatewayNatsProxy, GATEWAY_NATS } from './gateway-nats.proxy';
 import { GatewayRabbitmqProxy, GATEWAY_RMQ } from './gateway-rabbitmq.proxy';
 import { TracingHttpModule } from '../tracing/tracing.module';
+import { ConfigXService } from '../core/config/config.service';
 
 @Module({
   imports: [
     TracingHttpModule,
-    ClientsModule.register([
+    ClientsModule.registerAsync([
       {
         name: GATEWAY_NATS,
-        transport: Transport.NATS,
-        options: { servers: process.env.NATS_URL },
+        useFactory: (configService: ConfigXService) => ({
+          transport: Transport.NATS,
+          options: { servers: configService.natsUrl },
+        }),
+        inject: [ConfigXService],
       },
       {
         name: GATEWAY_RMQ,
-        transport: Transport.RMQ,
-        options: {
-          urls: [process.env.RABBITMQ_URL!],
-          queue: 'notifications-service',
-        },
+        useFactory: (configService: ConfigXService) => ({
+          transport: Transport.RMQ,
+          options: {
+            urls: [configService.rabbitUrl],
+            queue: 'notifications-service',
+          },
+        }),
+        inject: [ConfigXService],
       },
     ]),
   ],

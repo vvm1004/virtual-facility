@@ -1,28 +1,41 @@
-import { Inject, NestMiddleware } from '@nestjs/common';
+import { Inject, Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import Redis from 'ioredis';
+import { ConfigXService } from '../../core/config/config.service';
 
-const TTL_MS = Number(process.env.IDEMPOTENCY_TTL_MS ?? 10 * 60_000); // 10 minutes
-
+@Injectable()
 export class IdempotencyMiddleware implements NestMiddleware {
-  constructor(@Inject('REDIS') private readonly redis: Redis) {}
+  constructor(
+    @Inject('REDIS') private readonly redis: Redis,
+    private readonly configService: ConfigXService,
+  ) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
     const key = req.header('Idempotency-Key');
     if (!key || req.method !== 'POST') return next();
 
+    const ttlMs = this.configService.idempotencyTtlMs;
     const cacheKey = `idem:${key}`;
     const lockKey = `idem-lock:${key}`;
 
     // Check if there is a previous result
     const cached = await this.redis.get(cacheKey);
     if (cached) {
-      res.setHeader('Idempotency-Cache', 'HIT');
-      return res.json(JSON.parse(cached));
+      try {
+        const parsed = JSON.parse(cached);
+        res.setHeader('Idempotency-Cache', 'HIT');
+        if (parsed && typeof parsed.status === 'number')
+          res.status(parsed.status);
+        return res.json(parsed?.body ?? parsed);
+      } catch {
+        // Fallback if legacy/plain body was stored
+        res.setHeader('Idempotency-Cache', 'HIT');
+        return res.json(cached);
+      }
     }
 
     // Set a lock to prevent concurrent processing of the same key
-    const gotLock = await this.redis.set(lockKey, '1', 'PX', TTL_MS, 'NX');
+    const gotLock = await this.redis.set(lockKey, '1', 'PX', ttlMs, 'NX');
     if (!gotLock) {
       // Another request is processing this key → short polling for the result
       for (let i = 0; i < 20; i++) {
@@ -42,7 +55,7 @@ export class IdempotencyMiddleware implements NestMiddleware {
     res.json = (body: any) => {
       // Save to Redis asynchronously without blocking the response
       this.redis
-        .set(cacheKey, JSON.stringify(body), 'PX', TTL_MS)
+        .set(cacheKey, JSON.stringify(body), 'PX', ttlMs)
         .finally(() => this.redis.del(lockKey));
       return originalJson(body);
     };

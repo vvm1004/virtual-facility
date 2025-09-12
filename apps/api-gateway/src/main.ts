@@ -6,13 +6,17 @@ import { BrokerExceptionFilter } from './http/filters/broker-exception.filter';
 import { SwaggerModuleX } from './core/docs/swagger.module';
 import { MetricsMiddleware } from './core/observability/metrics.middleware';
 import { AppModule } from './api-gateway.module';
+import { ConfigXService } from './core/config/config.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
 
+  // Get config service
+  const configService = app.get(ConfigXService);
+
   // Security & body size
   app.use(helmet());
-  const origin = process.env.CORS_ORIGIN ?? '*';
+  const origin = configService.corsOrigin;
   app.enableCors(
     origin === '*' ? { origin: '*' } : { origin, credentials: true },
   );
@@ -35,6 +39,6 @@ async function bootstrap() {
   // Swagger
   SwaggerModuleX.setup(app);
 
-  await app.listen(process.env.PORT ? Number(process.env.PORT) : 3000);
+  await app.listen(configService.port);
 }
 bootstrap();

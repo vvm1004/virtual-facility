@@ -4,7 +4,7 @@ import { ack, ask } from '../brokers/rx';
 import { ClassifyAlarmDto, CreateAlarmDto } from '@app/alarms';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import Redis from 'ioredis';
-const CLASSIFY_TTL = Number(process.env.CLASSIFY_CACHE_TTL ?? 5_000);
+import { ConfigXService } from '../core/config/config.service';
 
 @ApiTags('Alarms')
 @Controller('alarms')
@@ -12,6 +12,7 @@ export class AlarmsController {
   constructor(
     private readonly nats: GatewayNatsProxy,
     @Inject('REDIS') private readonly redis: Redis,
+    private readonly configService: ConfigXService,
   ) {}
 
   // request/response via NATS
@@ -21,23 +22,28 @@ export class AlarmsController {
     const key = `cls:${dto.name}:${dto.buildingId}`;
     const cached = await this.redis.get(key);
     if (cached) {
-      return JSON.parse(cached);
+      try {
+        return JSON.parse(cached);
+      } catch {
+        await this.redis.del(key);
+      }
     }
-    const timeout = Number(process.env.BROKER_TIMEOUT_MS ?? 3000);
-    const retries = Number(process.env.BROKER_RETRIES ?? 1);
+    const timeout = this.configService.brokerTimeoutMs;
+    const retries = this.configService.brokerRetries;
     const res = await ask(
       this.nats.send('alarm.classify', dto),
       timeout,
       retries,
     );
-    await this.redis.set(key, JSON.stringify(res), 'PX', CLASSIFY_TTL);
+    const cacheTtl = this.configService.classifyCacheTtl;
+    await this.redis.set(key, JSON.stringify(res), 'PX', cacheTtl);
     return res;
   } // { category: 'critical'|'non-critical'|'invalid' }
 
   // fire-and-forget via NATS
   @Post()
   async create(@Body() dto: CreateAlarmDto) {
-    const timeout = Number(process.env.BROKER_TIMEOUT_MS ?? 3000);
+    const timeout = this.configService.brokerTimeoutMs;
     await ack(this.nats.emit('alarm.created', dto), timeout);
     return { ok: true };
   }

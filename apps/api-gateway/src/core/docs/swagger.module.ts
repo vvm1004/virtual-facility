@@ -1,10 +1,12 @@
 import { INestApplication, Module } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ConfigXService } from '../config/config.service';
 
 @Module({})
 export class SwaggerModuleX {
   static setup(app: INestApplication) {
-    const apiVersion = process.env.API_VERSION ?? '1.0.0';
+    const configService = app.get(ConfigXService);
+    const apiVersion = configService.apiVersion;
 
     const config = new DocumentBuilder()
       .setTitle('Virtual Facility API Gateway')
